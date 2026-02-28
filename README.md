@@ -27,7 +27,7 @@ cp -r the-assumption-killer ~/.claude/skills/
 Or clone directly:
 
 ```bash
-git clone https://github.com/rashad/assumption-killer-skill.git ~/.claude/skills/the-assumption-killer
+git clone https://github.com/rashadsternes/assumption-killer-skill.git ~/.claude/skills/the-assumption-killer
 ```
 
 ## Usage
