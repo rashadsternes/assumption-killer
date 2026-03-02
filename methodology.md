@@ -24,6 +24,7 @@ The difference is enormous. An audit produces vague observations. A verification
 | **Two-step chain** | Step 1 (teach-back) generates the target. Step 2 (verification) tests it. Neither works as well alone. The teach-back surfaces what you *think* is true. Verification tests it against what *is* true. |
 | **Human correction between steps** | The user reviews Step 1 output before Step 2 runs. This injects domain knowledge the AI can't infer from code — business rules, customer behavior, historical decisions, intent behind weird code. |
 | **Parallel subagents for depth** | Each flow gets its own investigation agent with a narrow, specific question to answer. This is what enables exhaustive verification without running out of context or cutting corners. |
+| **Agents produce files, not context** | Subagents write findings to dedicated temp files instead of returning results in-context. The main context stays thin — it dispatches, monitors, and presents. This prevents context overflow when running many parallel agents on large codebases. Pre-extracting focused code sections into files before verification further reduces per-agent context consumption. |
 
 ## What makes it different
 

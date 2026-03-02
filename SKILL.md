@@ -13,7 +13,7 @@ AI-generated code runs. It passes linters. It might even have tests. But does it
 
 This skill makes those beliefs explicit, then tests each one against the actual code. It applies to customer flows, business logic, cross-system dependencies — anywhere the gap between "what I asked for" and "what got built" can hide bugs.
 
-> **Token warning:** This skill is intentionally thorough. The `generate` and `verify` steps use parallel subagents to investigate multiple flows concurrently. Expect significant token usage, especially on large codebases. This is the tradeoff — shallow analysis misses bugs, deep analysis costs tokens.
+> **Token warning:** This skill is intentionally thorough. The `generate` step uses parallel subagents to investigate flows concurrently. The `verify` step uses a 3-phase pipeline (extract→verify→compile) with file-based handoffs between agents to scale to large codebases without context overflow. Expect significant token usage. This is the tradeoff — shallow analysis misses bugs, deep analysis costs tokens.
 
 ## Step routing
 
@@ -127,33 +127,102 @@ After saving, tell the user:
 2. Read it completely.
 3. Auto-detect high-risk assumptions — scan for `[UNCERTAIN]`, `[ASSUMPTION]`, `[UNCLEAR]` markers. These get the deepest investigation.
 
-### Verification Process
+### Verification Process — 3-Phase Pipeline
 
-**Use parallel subagents** (Task tool with `subagent_type: Explore`) to verify multiple flows concurrently. Each flow or group of related assumptions is an independent investigation. Give each subagent:
-- The specific assumptions to verify
-- Instructions to trace the full execution path
+Verification uses an extract→verify→compile pipeline. Agents write findings to files, not back into the main context. This prevents context overflow on large codebases.
+
+**Architecture:**
+
+```
+Phase 0:  2-3 extractors (parallel)  →  N context files
+Phase 1:  N verifiers    (parallel)  →  N finding files
+Phase 2:  1 compiler     (serial)    →  1 final document
+```
+
+**Critical rules:**
+- All agents use `subagent_type: general-purpose` (they need Write tool access)
+- All agents run with `run_in_background: true`
+- Each agent writes to its OWN files only — no shared writes
+- Main context monitors progress via 1-line return summaries, never reads raw findings directly
+- Temp file convention: `/tmp/ak-context-flow-{N}.md` and `/tmp/ak-verify-flow-{N}.md`
+
+---
+
+#### Phase 0: Extract Context
+
+Pre-extract focused code sections so verification agents don't search the full codebase.
+
+1. Count the flows in the assumptions file
+2. Group flows into 2-3 batches for extraction (e.g., for 7 flows: A = flows 1-3, B = flows 4-5, C = flows 6-7)
+3. Launch 2-3 **general-purpose** agents in parallel, one per batch
+
+Each extraction agent receives:
+- The full "What happens", "Assumptions", and "Cross-flow risks" sections for its assigned flows
+- Instructions to extract ONLY the code sections referenced by those assumptions
+
+Each extraction agent does:
+1. For each assigned flow, identify the specific files and functions referenced in the assumptions
+2. Read those files and extract the relevant code sections (function bodies, specific line ranges — not entire files)
+3. Write one focused context file per flow: `/tmp/ak-context-flow-{N}.md`
+4. Each context file should be self-contained: include the flow's assumptions at the top, followed by the extracted code sections with file:line annotations
+5. Return a 1-line confirmation: `"Wrote context for flows X, Y, Z"`
+
+**Wait for all extraction agents to complete before starting Phase 1.**
+
+---
+
+#### Phase 1: Verify
+
+Launch N **general-purpose** agents in parallel — one per flow.
+
+Each verification agent receives:
+- The path to its pre-extracted context file: `/tmp/ak-context-flow-{N}.md`
+- The classification rubric (below)
 - The confidence calibration from the repo health assessment
 
-For **every** assumption in the document:
-
-1. **Find the relevant code** — use Grep, Glob, and Read to locate the actual implementation
-2. **Trace the execution path** — follow through function calls, not just the entry point
-3. **Classify the result:**
+Each verification agent does:
+1. Read its context file (focused, ~200-400 lines instead of searching the full codebase)
+2. For **every** assumption in the flow, classify the result:
    - **Confirmed** — code does what the assumption says. Cite file:line.
    - **Incorrect (code bug)** — the code doesn't do what it should. Describe the bug, impact, and fix options.
    - **Incorrect (wrong assumption)** — the code is fine but the assumption was wrong. Explain actual behavior.
    - **Partially correct** — some aspects confirmed, others not. Be specific.
-
-4. **For high-risk items** (tagged `[UNCERTAIN]`, `[ASSUMPTION]`, `[UNCLEAR]`):
+3. For **high-risk items** (tagged `[UNCERTAIN]`, `[ASSUMPTION]`, `[UNCLEAR]`):
    - Trace the FULL execution path, including error handling
    - Check edge cases and boundary conditions
    - Look for related code that might contradict the assumption
    - Cross-reference with tests if they exist
-   - Check git blame for recent changes that might have introduced inconsistencies
+4. Write findings to `/tmp/ak-verify-flow-{N}.md` as a markdown table (one row per assumption) with brief evidence
+5. Return a 1-line summary: `"Flow N: X confirmed, Y incorrect, Z flags"`
+
+**Wait for all verification agents to complete before starting Phase 2.**
+
+---
+
+#### Phase 2: Compile
+
+Launch 1 **general-purpose** compiler agent.
+
+The compiler agent receives:
+- The paths to all finding files: `/tmp/ak-verify-flow-*.md`
+- The path to the original assumptions file (for the header: date, repo health)
+- The docs directory path for the output file
+- The output format template (below)
+
+The compiler agent does:
+1. Read all `/tmp/ak-verify-flow-*.md` files
+2. Read the assumptions file header (date, repo health summary)
+3. Compile into `{docs_dir}/assumption-verification.md` using the output format below
+4. Build the Verdict Summary table, count bugs/corrections, assemble all Flow-by-Flow sections
+5. Return a summary: `"Written to {path}. X bugs found, Y assumptions corrected, Z high-risk items."`
+
+Main context presents the compiler's summary to the user.
+
+---
 
 ### Output
 
-Save to `{docs_dir}/assumption-verification.md` with this structure:
+The compiler writes to `{docs_dir}/assumption-verification.md` with this structure:
 
 ```markdown
 # Assumption Verification
@@ -200,6 +269,8 @@ Save to `{docs_dir}/assumption-verification.md` with this structure:
 ## Prerequisites Discovered
 {blocking issues found that must be addressed before planned work}
 ```
+
+Intermediate files (`/tmp/ak-context-flow-*.md`, `/tmp/ak-verify-flow-*.md`) are working artifacts. They persist in `/tmp` for debugging but are not part of the final output.
 
 **Critical:** Do NOT fix anything. Output the verification document only. The user decides what to act on and in what order.
 

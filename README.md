@@ -80,7 +80,13 @@ See [methodology.md](methodology.md) for the full principles.
 
 ## Token warning
 
-This skill is intentionally thorough. Both `generate` and `verify` use parallel subagents to investigate multiple flows concurrently. Expect significant token usage on large codebases. The tradeoff is explicit — shallow analysis is cheap but misses bugs.
+This skill is intentionally thorough. The `generate` step uses parallel subagents to investigate flows concurrently. The `verify` step uses a 3-phase pipeline to scale to large codebases:
+
+- **Phase 0 (Extract):** 2-3 agents pre-extract focused code sections into temp files
+- **Phase 1 (Verify):** N agents verify assumptions against pre-extracted context, writing findings to files
+- **Phase 2 (Compile):** 1 agent reads all findings and writes the final verification document
+
+All agents write to files instead of returning results in-context, keeping the main conversation lean. Expect significant token usage. The tradeoff is explicit — shallow analysis is cheap but misses bugs.
 
 ## When to use it
 
