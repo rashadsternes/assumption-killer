@@ -1,7 +1,5 @@
 # The Assumption Killer
 
-> **Upcoming change:** The slash command is changing from `/the-assumption-killer` to `/assumption-killer`. If you cloned this skill, pull the latest version and the command updates automatically.
-
 A Claude Code skill that verifies AI-generated code and large codebases behave as intended.
 
 AI writes code that runs. It passes linters, compiles, even handles edge cases. But "runs correctly" and "does what the business needs" are different things. This skill makes beliefs about your code explicit, then tests each one against the actual implementation.
@@ -29,7 +27,7 @@ cp -r the-assumption-killer ~/.claude/skills/
 Or clone directly:
 
 ```bash
-git clone https://github.com/rashadsternes/assumption-killer-skill.git ~/.claude/skills/the-assumption-killer
+git clone https://github.com/rashadsternes/assumption-killer-skill.git ~/.claude/skills/assumption-killer
 ```
 
 ## Usage
