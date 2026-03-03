@@ -113,7 +113,7 @@ Save to `{docs_dir}/assumptions.md` with this structure:
 
 After saving, tell the user:
 
-**"Review this file. Correct anything I got wrong. Add context I'm missing — business rules, customer behavior, historical decisions. The more you correct now, the more bugs verification will find. Run `/the-assumption-killer verify` when ready."**
+**"Review this file. Correct anything I got wrong. Add context I'm missing — business rules, customer behavior, historical decisions. The more you correct now, the more bugs verification will find. Run `/assumption-killer verify` when ready."**
 
 **Critical:** Do NOT proceed to verification. Do NOT fix anything. The human correction step between generate and verify is what makes this work. Without it, you're just auditing code — with it, you're testing beliefs.
 
