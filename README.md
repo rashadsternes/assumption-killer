@@ -38,17 +38,10 @@ Install with one command:
 npx skills add rashadsternes/assumption-killer
 ```
 
-Or clone directly:
+Or clone directly if you want to inspect the source before running:
 
 ```bash
 git clone https://github.com/rashadsternes/assumption-killer.git ~/.claude/skills/assumption-killer
-```
-
-Or copy manually:
-
-```bash
-mkdir -p ~/.claude/skills
-cp -r assumption-killer ~/.claude/skills/
 ```
 
 Then run the three steps in order:
