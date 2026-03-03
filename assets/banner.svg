@@ -1,0 +1,152 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 380" width="900" height="380">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#0d1117"/>
+      <stop offset="100%" style="stop-color:#161b22"/>
+    </linearGradient>
+    <linearGradient id="redGlow" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#ff4444;stop-opacity:0"/>
+      <stop offset="50%" style="stop-color:#ff4444;stop-opacity:0.1"/>
+      <stop offset="100%" style="stop-color:#ff4444;stop-opacity:0"/>
+    </linearGradient>
+    <linearGradient id="greenGlow" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#3fb950;stop-opacity:0"/>
+      <stop offset="50%" style="stop-color:#3fb950;stop-opacity:0.05"/>
+      <stop offset="100%" style="stop-color:#3fb950;stop-opacity:0"/>
+    </linearGradient>
+    <linearGradient id="amberGlow" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#d29922;stop-opacity:0"/>
+      <stop offset="50%" style="stop-color:#d29922;stop-opacity:0.08"/>
+      <stop offset="100%" style="stop-color:#d29922;stop-opacity:0"/>
+    </linearGradient>
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="2.5" result="coloredBlur"/>
+      <feMerge>
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    <filter id="subtleGlow">
+      <feGaussianBlur stdDeviation="1" result="coloredBlur"/>
+      <feMerge>
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    <filter id="strongGlow">
+      <feGaussianBlur stdDeviation="4" result="coloredBlur"/>
+      <feMerge>
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+  
+  <!-- Background -->
+  <rect width="900" height="380" fill="url(#bg)" rx="8"/>
+  
+  <!-- Subtle border -->
+  <rect x="0.5" y="0.5" width="899" height="379" fill="none" stroke="#30363d" stroke-width="1" rx="8"/>
+  
+  <!-- Terminal window dots -->
+  <circle cx="28" cy="20" r="5" fill="#ff5f57"/>
+  <circle cx="46" cy="20" r="5" fill="#febc2e"/>
+  <circle cx="64" cy="20" r="5" fill="#28c840"/>
+  
+  <!-- Terminal title bar text -->
+  <text x="450" y="24" font-family="SF Mono, Monaco, Menlo, Consolas, monospace" font-size="11" fill="#8b949e" text-anchor="middle">assumption-killer — verification report</text>
+  
+  <!-- Divider line -->
+  <line x1="0" y1="38" x2="900" y2="38" stroke="#30363d" stroke-width="1"/>
+  
+  <!-- Row highlight backgrounds -->
+  <rect x="1" y="50" width="898" height="22" fill="url(#greenGlow)"/>
+  <rect x="1" y="72" width="898" height="22" fill="url(#greenGlow)"/>
+  <rect x="1" y="94" width="898" height="22" fill="url(#greenGlow)"/>
+  <rect x="1" y="116" width="898" height="22" fill="url(#greenGlow)"/>
+  
+  <!-- Terminal prompt -->
+  <text x="28" y="63" font-family="SF Mono, Monaco, Menlo, Consolas, monospace" font-size="13" fill="#8b949e">$</text>
+  <text x="44" y="63" font-family="SF Mono, Monaco, Menlo, Consolas, monospace" font-size="13" fill="#c9d1d9">/assumption-killer verify</text>
+  
+  <!-- Green status lines -->
+  <text x="28" y="85" font-family="SF Mono, Monaco, Menlo, Consolas, monospace" font-size="13">
+    <tspan fill="#3fb950" filter="url(#subtleGlow)">✓</tspan>
+    <tspan fill="#8b949e"> Compiles</tspan>
+    <tspan fill="#3fb950" dx="24" filter="url(#subtleGlow)">✓</tspan>
+    <tspan fill="#8b949e"> Passes lint</tspan>
+    <tspan fill="#3fb950" dx="24" filter="url(#subtleGlow)">✓</tspan>
+    <tspan fill="#8b949e"> Tests pass</tspan>
+  </text>
+  
+  <text x="28" y="107" font-family="SF Mono, Monaco, Menlo, Consolas, monospace" font-size="13">
+    <tspan fill="#3fb950" filter="url(#subtleGlow)">✓</tspan>
+    <tspan fill="#8b949e"> Edge cases handled</tspan>
+    <tspan fill="#3fb950" dx="24" filter="url(#subtleGlow)">✓</tspan>
+    <tspan fill="#8b949e"> Type safe</tspan>
+    <tspan fill="#3fb950" dx="24" filter="url(#subtleGlow)">✓</tspan>
+    <tspan fill="#8b949e"> No runtime errors</tspan>
+  </text>
+  
+  <text x="28" y="129" font-family="SF Mono, Monaco, Menlo, Consolas, monospace" font-size="12" fill="#484f58">───────────────────────────────────────────────</text>
+  
+  <!-- Red findings - the dramatic reveal -->
+  <rect x="1" y="138" width="898" height="22" fill="url(#redGlow)"/>
+  <rect x="1" y="160" width="898" height="22" fill="url(#redGlow)"/>
+  <rect x="1" y="182" width="898" height="22" fill="url(#amberGlow)"/>
+  <rect x="1" y="204" width="898" height="22" fill="url(#amberGlow)"/>
+  <rect x="1" y="226" width="898" height="22" fill="url(#amberGlow)"/>
+  
+  <text x="28" y="152" font-family="SF Mono, Monaco, Menlo, Consolas, monospace" font-size="13">
+    <tspan fill="#ff4444" filter="url(#glow)">✗</tspan>
+    <tspan fill="#ff7b72"> Checkout applies discount to excluded items</tspan>
+  </text>
+  
+  <text x="28" y="174" font-family="SF Mono, Monaco, Menlo, Consolas, monospace" font-size="13">
+    <tspan fill="#ff4444" filter="url(#glow)">✗</tspan>
+    <tspan fill="#ff7b72"> Auth redirect drops query params on callback</tspan>
+  </text>
+  
+  <text x="28" y="196" font-family="SF Mono, Monaco, Menlo, Consolas, monospace" font-size="13">
+    <tspan fill="#d29922" filter="url(#subtleGlow)">⚠</tspan>
+    <tspan fill="#e3b341"> Onboarding flow skips email verification</tspan>
+  </text>
+  
+  <text x="28" y="218" font-family="SF Mono, Monaco, Menlo, Consolas, monospace" font-size="13">
+    <tspan fill="#d29922" filter="url(#subtleGlow)">⚠</tspan>
+    <tspan fill="#e3b341"> API rate limit assumed but never enforced</tspan>
+  </text>
+  
+  <text x="28" y="240" font-family="SF Mono, Monaco, Menlo, Consolas, monospace" font-size="13">
+    <tspan fill="#d29922" filter="url(#subtleGlow)">⚠</tspan>
+    <tspan fill="#e3b341"> Intent drift: filter logic no longer matches spec</tspan>
+  </text>
+  
+  <!-- Spacer -->
+  <text x="28" y="262" font-family="SF Mono, Monaco, Menlo, Consolas, monospace" font-size="12" fill="#484f58">───────────────────────────────────────────────</text>
+  
+  <!-- Blinking cursor suggestion of more -->
+  <text x="28" y="280" font-family="SF Mono, Monaco, Menlo, Consolas, monospace" font-size="12" fill="#484f58">
+    <tspan>... and it keeps going</tspan>
+  </text>
+  
+  <!-- Title area - right side -->
+  <text x="872" y="210" font-family="SF Mono, Monaco, Menlo, Consolas, monospace" font-size="30" fill="#c9d1d9" text-anchor="end" font-weight="bold" letter-spacing="-0.5">ASSUMPTION</text>
+  <text x="872" y="246" font-family="SF Mono, Monaco, Menlo, Consolas, monospace" font-size="30" fill="#ff7b72" text-anchor="end" font-weight="bold" letter-spacing="-0.5" filter="url(#subtleGlow)">KILLER</text>
+  
+  <!-- Subtitle -->
+  <text x="872" y="272" font-family="SF Mono, Monaco, Menlo, Consolas, monospace" font-size="11" fill="#8b949e" text-anchor="end">Your code runs. But does it do the right thing?</text>
+  
+  <!-- Bottom info bar -->
+  <rect x="1" y="338" width="898" height="34" fill="#0d1117" rx="0"/>
+  <line x1="0" y1="338" x2="900" y2="338" stroke="#30363d" stroke-width="1"/>
+  
+  <text x="28" y="360" font-family="SF Mono, Monaco, Menlo, Consolas, monospace" font-size="11" fill="#484f58">
+    <tspan fill="#3fb950">npx</tspan>
+    <tspan fill="#8b949e"> skills add rashadsternes/assumption-killer-skill</tspan>
+  </text>
+  
+  <text x="872" y="360" font-family="SF Mono, Monaco, Menlo, Consolas, monospace" font-size="11" fill="#484f58" text-anchor="end">
+    <tspan>Three commands. Every assumption checked.</tspan>
+  </text>
+</svg>
